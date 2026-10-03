@@ -18,6 +18,9 @@ const NO_STORE = {
 const nextConfig = {
   serverExternalPackages: ["@mastra/*"],
   productionBrowserSourceMaps: process.env.ENABLE_SOURCE_MAPS === "true",
+  allowedDevOrigins: process.env.PUBLIC_URL
+    ? [new URL(process.env.PUBLIC_URL).hostname]
+    : [],
 
   async headers() {
     return [

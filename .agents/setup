@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+# Use the Node.js/npm toolchain supplied by the Amp orb image.
+node -e 'if (Number(process.versions.node.split(".")[0]) < 22) throw new Error("Node.js 22 or newer is required")'
+echo "Orb toolchain: $(node --version), npm $(npm --version)"
+
+# npm ci always replaces node_modules. Reuse snapshot dependencies only when
+# the manifests, toolchain, and this setup script are unchanged.
+fingerprint=$({ sha256sum package.json package-lock.json .agents/setup; node --version; npm --version; } | sha256sum | cut -d ' ' -f 1)
+marker=node_modules/.amp-setup-fingerprint
+if [[ -f "$marker" && "$(cat "$marker")" == "$fingerprint" && -x node_modules/.bin/next && -x node_modules/.bin/jest ]]; then
+  echo "Dependencies match the snapshot; skipping npm ci."
+else
+  # Cached npm extraction exhausted memory on the 2 GiB orb. A temporary,
+  # empty download cache keeps installation below that limit without touching
+  # the user's npm cache. node_modules itself is retained in the snapshot.
+  cache=$(mktemp -d)
+  trap 'rm -rf "$cache"' EXIT
+  echo "Installing locked dependencies..."
+  time npm ci --include=dev --no-audit --no-fund --cache "$cache"
+  printf '%s\n' "$fingerprint" > "$marker"
+fi

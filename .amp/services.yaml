@@ -1,0 +1,7 @@
+services:
+  web:
+    command: npm run dev -- --hostname 0.0.0.0 --port "$PORT"
+    health: /
+    portal:
+      title: ChessAgine
+      description: Development app. Authentication and external API features may require development credentials.
