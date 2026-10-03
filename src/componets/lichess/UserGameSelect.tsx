@@ -8,14 +8,16 @@ import {
   Stack,
 } from "@mui/material";
 import UserLichessGames from "./UserLichessGames";
+import UserChessComGames from "../chesscom/UserChessComGames";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 
 
 interface UserGameSelectProps {
   loadPGN: (pgn: string) => void;
+  provider?: "Lichess" | "Chess.com";
 }
 
-const UserGameSelect: React.FC<UserGameSelectProps> = ({ loadPGN }) => {
+const UserGameSelect: React.FC<UserGameSelectProps> = ({ loadPGN, provider = "Lichess" }) => {
   const [open, setOpen] = useState(false);
   
   const handleOpen = () => setOpen(true);
@@ -34,7 +36,7 @@ const UserGameSelect: React.FC<UserGameSelectProps> = ({ loadPGN }) => {
             fontWeight: 'medium',
           }}
         >
-          Select Lichess Game
+          Select {provider} Game
         </Button>
       </Stack>
 
@@ -63,11 +65,15 @@ const UserGameSelect: React.FC<UserGameSelectProps> = ({ loadPGN }) => {
             mb: 2,
           }}
         >
-          Select a Recent Lichess Game
+          Select a Recent {provider} Game
         </DialogTitle>
         
         <DialogContent sx={{ p: 0 }}>
-          <UserLichessGames loadPGN={loadPGN} setOpen={setOpen} />
+          {provider === "Chess.com" ? (
+            <UserChessComGames loadPGN={loadPGN} setOpen={setOpen} />
+          ) : (
+            <UserLichessGames loadPGN={loadPGN} setOpen={setOpen} />
+          )}
         </DialogContent>
         
         <DialogActions 

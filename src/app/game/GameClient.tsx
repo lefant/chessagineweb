@@ -289,7 +289,7 @@ function extractStartingFen(pgn: string): string | undefined {
 type LeftTab = "load" | "analysis" | "save";
 
 // ── Load section types ────────────────────────────────────────────────────────
-type LoadSection = "history" | "pgn" | "lichess" | "mygames" | "studies" | null;
+type LoadSection = "history" | "pgn" | "lichess" | "mygames" | "chesscom" | "studies" | null;
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
@@ -792,6 +792,7 @@ export default function GamePage() {
     { id: "pgn",     icon: <UploadFileIcon sx={{ fontSize: 16 }} />, label: "Paste PGN" },
     { id: "lichess", icon: <LinkIcon sx={{ fontSize: 16 }} />, label: "Lichess URL" },
     { id: "mygames", icon: <BookmarkIcon sx={{ fontSize: 16 }} />, label: "My Lichess Games" },
+    { id: "chesscom", icon: <BookmarkIcon sx={{ fontSize: 16 }} />, label: "My Chess.com Games" },
     { id: "studies", icon: <AnalyticsIcon sx={{ fontSize: 16 }} />, label: "Studies" },
   ];
 
@@ -889,6 +890,7 @@ export default function GamePage() {
             <UserPGNUploader loadPGN={pgn => loadUserPGN(pgn)} setMultiGameList={setMultiGameList} />
           </Stack>
         )}
+        {loadSection === "chesscom" && <UserGameSelect provider="Chess.com" loadPGN={loadUserPGN} />}
         {loadSection === "studies" && <LoadStudy setChapters={setChapters} setInputsVisible={() => {}} />}
       </Box>
     </Box>
@@ -1284,6 +1286,7 @@ export default function GamePage() {
                 {loadSection === "pgn" && <LoadPGNGame pgnText={pgnText} setPgnText={setPgnText} loadPGN={loadPGN} setInputsVisible={() => {}} />}
                 {loadSection === "lichess" && <LoadLichessGameUrl setComment={setComment} setCurrentMoveIndex={setCurrentMoveIndex} setFen={setFen} setGame={setGame} setGameInfo={setGameInfo} setGameReview={setGameReview} setInputsVisible={() => {}} setMoves={setMoves} setParsedMovesWithComments={setParsedMovesWithComments} setPgnText={setPgnText} generateGameReview={generateGameReview} analyzeGameTheme={analyzeGameTheme} autoAnalysis={autoAnalysis} />}
                 {loadSection === "mygames" && <Stack spacing={1}><UserGameSelect loadPGN={loadUserPGN} /><UserPGNUploader loadPGN={pgn => loadUserPGN(pgn)} setMultiGameList={setMultiGameList} /></Stack>}
+                {loadSection === "chesscom" && <UserGameSelect provider="Chess.com" loadPGN={loadUserPGN} />}
                 {loadSection === "studies" && <LoadStudy setChapters={setChapters} setInputsVisible={() => {}} />}
               </Box>
             </CardContent>
